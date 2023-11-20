@@ -42,7 +42,7 @@ draw world = case gameState world of
     lineSpacing = 30 -- Adjust the spacing between lines
     welcomeText =
       pictures
-        [ translate (-765) (fromIntegral windowHeight / 2 - 50) $ scale 1.5 1.5 $ text "Welcome to the"
+        [ translate (-780) (fromIntegral windowHeight / 2 - 50) $ scale 1.5 1.5 $ text "Welcome to the"
         , translate (-550) (fromIntegral windowHeight / 2 - 50 - lineSpacing * 9) $ scale 1.5 1.5 $ text "MAZE game"
         ]
     playerNamePrompt = translate (-200) (-200) $ scale 0.5 0.5 $ text "Enter your name:"
