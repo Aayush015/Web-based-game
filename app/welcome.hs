@@ -1,91 +1,83 @@
 import Graphics.Gloss
-import Graphics.Gloss.Interface.Pure.Game
+import Graphics.Gloss.Interface.IO.Game
 
 data GameState = WelcomeScreen | Playing deriving (Eq)
 
 data World = World
   { playerName :: String
   , gameState  :: GameState
+  , input      :: String
   }
 
 initialWorld :: World
-initialWorld = World { playerName = "", gameState = WelcomeScreen }
+initialWorld = World { playerName = "", gameState = WelcomeScreen, input = "" }
 
 windowWidth, windowHeight :: Int
 windowWidth  = 800
 windowHeight = 600
 
-backgroundImage :: FilePath
-backgroundImage = "path/to/your/background/image.jpg"
-
 main :: IO ()
-main = play
-  (InWindow "Maze Game" (windowWidth, windowHeight) (10, 10))
-  white
+main = playIO
+  FullScreen
+  blue
   30
   initialWorld
   draw
   handleInput
   update
 
-draw :: World -> Picture
+draw :: World -> IO Picture
 draw world = case gameState world of
-  WelcomeScreen -> pictures
+  WelcomeScreen -> return $ pictures
     [ background
-    , welcomeMessage
+    , welcomeText
     , playerNamePrompt
     , playerNameText (playerName world)
     , startButton
+    , inputBox (input world)
     ]
-  Playing -> Blank
-
-background :: Picture
-background = translate (fromIntegral windowWidth / 2) (fromIntegral windowHeight / 2) $ 
-  bitmap backgroundScale backgroundScale backgroundImage
+  Playing -> return Blank
   where
-    backgroundScale = 0.5  -- Adjust the scale as needed
+    background = color blue $ rectangleSolid (fromIntegral windowWidth) (fromIntegral windowHeight)
+    lineSpacing = 30 -- Adjust the spacing between lines
+    welcomeText =
+      pictures
+        [ translate (-765) (fromIntegral windowHeight / 2 - 50) $ scale 1.5 1.5 $ text "Welcome to the"
+        , translate (-550) (fromIntegral windowHeight / 2 - 50 - lineSpacing * 9) $ scale 1.5 1.5 $ text "MAZE game"
+        ]
+    playerNamePrompt = translate (-200) (-200) $ scale 0.5 0.5 $ text "Enter your name:"
+    playerNameText name = translate (-50) (-250) $ scale 0.25 0.25 $ text name
+    startButton =
+      translate 0 (-350) $      -- position of the rectange
+        color (dark green) $
+          pictures
+            [ rectangleSolid 200 60    -- size of the rectange
+            , translate (-50) (-10) $ scale 0.25 0.25 $ color white $ text "Start"
+            ]
+    inputBox inp = translate (0) (-250) $ pictures
+      [ rectangleWire 200 30
+      , translate (-90) (-15) $ scale 0.2 0.2 $ text inp
+      ]
 
-welcomeMessage :: Picture
-welcomeMessage = translate (-150) 150 $
-  scale 0.5 0.5 $
-    text "WELCOME TO THE MAZE GAME"
-
-playerNamePrompt :: Picture
-playerNamePrompt = translate (-100) 50 $
-  scale 0.25 0.25 $
-    text "Enter your name:"
-
-playerNameText :: String -> Picture
-playerNameText name = translate (-30) 0 $
-  scale 0.25 0.25 $
-    text name
-
-startButton :: Picture
-startButton = translate (-50) (-100) $
-  color buttonColor $
-    rectangleSolid 100 40
-  where
-    buttonColor = dark green
-
-handleInput :: Event -> World -> World
+handleInput :: Event -> World -> IO World
 handleInput (EventKey (MouseButton LeftButton) Up _ (x, y)) world =
   case gameState world of
     WelcomeScreen ->
       if isWithinButtonBounds x y
-        then world { gameState = Playing }
-        else world
-    Playing -> world
+        then return $ world { gameState = Playing }
+        else return world
+    Playing -> return world
 handleInput (EventKey (Char c) Down _ _) world =
   case gameState world of
     WelcomeScreen ->
-      if c == '\DEL' && not (null (playerName world))
-        then world { playerName = init (playerName world) }
-        else world { playerName = playerName world ++ [c] }
-    Playing -> world
-handleInput _ world = world
+      if c == '\DEL' && not (null (input world))
+        then return $ world { input = init (input world) }
+        else return $ world { input = input world ++ [c] }
+    Playing -> return world
+handleInput _ world = return world
 
-update :: Float -> World -> World
-update _ world = world
+update :: Float -> World -> IO World
+update _ world = return world
 
 isWithinButtonBounds :: Float -> Float -> Bool
-isWithinButtonBounds x y = x >= -50 && x <= 50 && y >= -120 && y <= -80
+isWithinButtonBounds x y = x >= -100 && x <= 100 && y >= -200 && y <= -140
