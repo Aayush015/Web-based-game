@@ -1,5 +1,8 @@
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
+import System.Process (callCommand)  
+import System.Exit (exitSuccess)
+
 
 data GameState = WelcomeScreen | Playing deriving (Eq)
 
@@ -64,7 +67,11 @@ handleInput (EventKey (MouseButton LeftButton) Up _ (x, y)) world =
   case gameState world of
     WelcomeScreen ->
       if isWithinButtonBounds x y
-        then return $ world { gameState = Playing }
+        then do
+          -- Execute Main.hs in a separate process
+          _ <- callCommand "start /b ghc --make Main.hs -o Main && start /b Main"
+          -- Terminate the welcome.hs process
+          exitSuccess
         else return world
     Playing -> return world
 handleInput (EventKey (Char c) Down _ _) world =
@@ -80,4 +87,4 @@ update :: Float -> World -> IO World
 update _ world = return world
 
 isWithinButtonBounds :: Float -> Float -> Bool
-isWithinButtonBounds x y = x >= -100 && x <= 100 && y >= -200 && y <= -140
+isWithinButtonBounds x y = x >= 0 && x <= 200 && y >= -350 && y <= -290
