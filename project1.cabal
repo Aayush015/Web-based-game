@@ -34,6 +34,10 @@ executable project1
     build-depends:    base >= 4.14 && < 4.18,
                       random,
                       gloss, 
-                      GLUT >= 2.7.0.16 && < 2.8
+                      gloss-juicy,
+                      GLUT >= 2.7.0.16 && < 2.8,
+                      JuicyPixels >= 3.3.5 && < 3.4,
+                      directory >= 1.3.7.1 && < 1.4,
+                      gd 
     hs-source-dirs:   app
     default-language: Haskell2010
