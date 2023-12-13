@@ -1,4 +1,5 @@
-![Trial](https://docs.google.com/document/d/1_dzKuc3kNDMKZHtBYryaOYbox32Iz7ScJbc5UcypWOw/edit?usp=sharing)
+![Welcome](app\pictures\welcome.jpg)
+![Game](app\pictures\game.jpg)
 # Maze Game
 
 ## Description
