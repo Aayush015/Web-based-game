@@ -1,5 +1,6 @@
-![Welcome](app\pictures\welcome.jpg)
-![Game](app\pictures\game.jpg)
+![Welcome](app/pictures/welcome.jpg)
+![Game](app/pictures/game.jpg)
+
 # Maze Game
 
 ## Description
